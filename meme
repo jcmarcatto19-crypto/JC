@@ -1,0 +1,60 @@
+import discord
+from discord.ext import commands
+import random
+import os
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+
+@bot.event
+async def on_ready():
+    print(f'Você logou como {bot.user}')
+
+
+# Memes normais
+@bot.command()
+async def meme(ctx):
+    img = random.choice(os.listdir('imagens'))
+    
+    with open(f'imagens/{img}', 'rb') as f:
+        picture = discord.File(f)
+
+    await ctx.send(file=picture)
+
+
+# Memes de animais
+@bot.command()
+async def animals(ctx):
+    img = random.choice(os.listdir('imagens/animals'))
+
+    with open(f'imagens/animals/{img}', 'rb') as f:
+        picture = discord.File(f)
+
+    await ctx.send(file=picture)
+
+
+# Memes com raridade
+@bot.command()
+async def rare(ctx):
+    memes = [
+        ('comum1.jpg', 70),
+        ('comum2.jpg', 70),
+        ('raro1.jpg', 20),
+        ('lendario.jpg', 10)
+    ]
+
+    nomes = [meme[0] for meme in memes]
+    pesos = [meme[1] for meme in memes]
+
+    escolhido = random.choices(nomes, weights=pesos, k=1)[0]
+
+    with open(f'imagens/{escolhido}', 'rb') as f:
+        picture = discord.File(f)
+
+    await ctx.send(file=picture)
+
+
+bot.run('SEU_TOKEN_AQUI')
